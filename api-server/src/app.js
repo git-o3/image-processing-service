@@ -5,13 +5,14 @@ import { AppError, errorHandler } from "./shared/error.js";
 import { authRouter } from "./modules/users/index.js";
 import { imageRouter } from "./modules/images/index.js"
 import { connectBroker } from "./shared/broker.js";
+import { initStatusConsumer } from "./modules/images/internal/workers/statusUpdateConsumer.js";
 
 const app = express();
 
 app.use(express.json());
 
 app.use("/api/v1/auth", authRouter);
-app.use('/api/v1/images', imageRoutes);
+app.use('/api/v1/images', imageRouter);
 
 app.all(/(.*)/, (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server.`, 404));
