@@ -1,5 +1,5 @@
 import Image from "../models/Image.js";
-import { AppError } from "../../../../../../shared/error.js";
+import { AppError } from "../../../../shared/error.js"
 
 class IngestionService {
   /**
@@ -27,7 +27,9 @@ class IngestionService {
       status: "PENDING",
     });
 
-    // return a plai object to prevent Mongoose internal leaks downstream
+    // return a plain object to prevent Mongoose internal leaks downstream
     return imageRecord.toObject();
   }
 }
+
+export default new IngestionService();

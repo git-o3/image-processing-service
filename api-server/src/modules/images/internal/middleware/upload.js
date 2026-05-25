@@ -3,9 +3,9 @@ import path from "path";
 import crypto from "crypto";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { AppError } from "../../../../shared/error";
+import { AppError } from "../../../../shared/error.js";
 
-const __filename = fileURLToPath(import.meta,url);
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const UPLOAD_DIR = path.join(__dirname, "../../../../../data/originals");

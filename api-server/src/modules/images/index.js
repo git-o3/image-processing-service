@@ -1,5 +1,5 @@
-import imgaeRouter from "./routes.js"
+import imageRouter from "./routes.js"
 
 
 // export router for app.js mount
-export default imgaeRouter;
+export { imageRouter }
