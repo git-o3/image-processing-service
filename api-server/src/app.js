@@ -28,6 +28,7 @@ async function bootstrap() {
 
      // initialize messaging broker loop
     await connectBroker();
+    await initStatusConsumer(); // background status listener
 
     // open HTTP communication channels
     app.listen(config.PORT, () => {
