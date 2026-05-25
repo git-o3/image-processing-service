@@ -1,29 +1,37 @@
 import IngestionService from "../services/ingestionService.js";
+import { ProcessingModuleApi } from "../../../processing/publicApi.js";
 import { AppError } from "../../../../shared/error.js";
 import asyncHandler from "../../../../shared/asyncHandler.js";
 
 class ImageController {
-    /**
-     * handle the HTTP upload and ingestion lifecycle
-     */
-   uploadImage = asyncHandler(async (req, res) => {
-    if(!req.file) {
-        throw new AppError("No image file upload.", 400);
+  /**
+   * handle the HTTP upload and ingestion lifecycle
+   */
+  uploadImage = asyncHandler(async (req, res) => {
+    if (!req.file) {
+      throw new AppError("No image file uploaded.", 400);
     }
 
     // extract transport-layer data into a clean service payload
     const imageRecord = await IngestionService.registerUpload({
-        userId: req.user._id,
-        originalName: req.file.originalname,
-        storagePath: req.file.path
+      userId: req.user._id,
+      originalName: req.file.originalname,
+      storagePath: req.file.path,
+    });
+
+    // handoff to the processing module's public gate (which calls broker.js under the hood)
+    await ProcessingModuleApi.enqueueImageJob({
+      imageId: imageRecord._id,
+      storagePath: imageRecord.storagePath,
+      originalName: imageRecord.originalName,
     });
 
     return res.status(201).json({
-        success: true,
-        message: "Image received and ingestion started.",
-        data: imageRecord
+      success: true,
+      message: "Image received and ingestion started.",
+      data: imageRecord,
     });
-   });
+  });
 }
 
 export default new ImageController();
