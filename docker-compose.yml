@@ -6,9 +6,11 @@ services:
     container_name: api_server
     restart: always
     env_file:
-      - ./api-server/.env
+      - ./.env
     ports:
       - "${PORT}:${PORT}"
+    volumes:
+      - shared_storage:/app/data   #shared volume bridge
     networks:
       - app-network
     depends_on:
@@ -16,6 +18,25 @@ services:
         condition: service_healthy
       rabbit_mq:
         condition: service_healthy
+
+  background-worker:
+    build:
+      context: ./background-worker
+      dockerfile: Dockerfile
+    container_name: background_worker
+    restart: always
+    env_file:
+      - ./.env 
+    environment:
+      - DERIVATIVES_DIR=/app/data/derivatives
+      - RABBITMQ_URL=amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbit_mq:5672
+    volumes:
+      - shared_storage:/app/data # mounts identical volume as api-server
+    networks:
+      - app-network
+    depends_on:
+       rabbit_mq:
+          condition: service_healthy # won't pull tasks until RabbitMQ is completely green
 
   mongo_db:
     image: mongo:6.0
@@ -59,3 +80,4 @@ networks:
 
 volumes:
   mongo_data:
+  shared_storage: 
