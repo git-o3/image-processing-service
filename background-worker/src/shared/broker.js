@@ -1,5 +1,6 @@
 import amqp from "amqplib";
-import config from "../config/index.js";
+
+const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost:5672"
 
 let connection = null;
 let channel = null;
@@ -19,8 +20,8 @@ export async function connectBroker() {
     console.log("🔌 Connecting to RabbitMQ broker...");
 
     try {
-        // msgBrokerURL points to amqp://o3:pass@rabbit_mq:5672 from config
-        connection = await amqp.connect(config.msgBrokerURL);
+        
+        connection = await amqp.connect(RABBITMQ_URL);
         channel = await connection.createChannel();
         
         channel.on("error", (err) => console.error("Channel error:", err.message));
