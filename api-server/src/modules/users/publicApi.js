@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import config from "../../config/index.js";
 import User from "./internal/models/User.js";
-import { AppError } from "../../error.js";
+import { AppError } from "../../shared/error.js";
 
 const protect = async (req, res, next) => {
     try {
@@ -14,7 +14,7 @@ const protect = async (req, res, next) => {
          return next(new AppError("You are not logged in. Please log in to get access.", 401));
        }
 
-       const decoded = jwt.verify(token, config.jwtSecret);
+       const decoded = jwt.verify(token, config.JWT_SECRET);
 
        const currentUser = await User.findById(decoded.id);
        if (!currentUser) {
