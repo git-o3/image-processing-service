@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
         cb(null, UPLOAD_DIR);
     },
     filename: function (req, file, cb) {
-        //generate a secure, unique hex string to preven collision on disk
+        //generate a secure, unique hex string to prevent collision on disk
         const uniqueSuffix = crypto.randomBytes(16).toString("hex");
         //keep the original extension intact(.jpg. png, etc)
         const ext = path.extname(file.originalname).toLowerCase();
@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
 const fileFilter = function (req, file, cb) {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimeType = allowedTypes.test(file.mimeType);
+    const mimeType = allowedTypes.test(file.mimetype);
 
     if (extName && mimeType) {
         return cb(null, true)
