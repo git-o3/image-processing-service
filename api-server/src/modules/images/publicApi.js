@@ -29,7 +29,7 @@ export const ImageModuleApi = {
                 status
             },
             {
-                new: true,
+                returnDocument: "after",  // Mongoose deprecation warning to Use "returnDocument" instead of "new"
                 runValidators: true
             }
         );
