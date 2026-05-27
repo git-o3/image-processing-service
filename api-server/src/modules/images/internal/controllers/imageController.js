@@ -2,6 +2,8 @@ import IngestionService from "../services/ingestionService.js";
 import { ProcessingModuleApi } from "../../../processing/publicApi.js";
 import { AppError } from "../../../../shared/error.js";
 import asyncHandler from "../../../../shared/asyncHandler.js";
+import ImageQueryService from "../services/imageQueryService.js";
+import TransformService from "../services/transformService.js";
 
 class ImageController {
   /**
@@ -30,6 +32,73 @@ class ImageController {
       success: true,
       message: "Image received and ingestion started.",
       data: imageRecord,
+    });
+  });
+
+   getImageById = asyncHandler(async (req, res) => {
+      const { id } = req.params;
+
+      const image = await imageQueryService.findById(id, req.user._id);
+
+      return res.status(200).json({
+        success: true,
+        data: image
+      });
+    });
+     
+    
+    getImages = asyncHandler(async (req, res) => {
+      const { page, limit } = req.query;
+
+      const { records, pagination } = await imageQueryService.findPaginated(
+        req.user._id,
+        { page, limit }
+      );
+
+      return res.status(200).json({
+        success: true,
+        data: records,
+        pagination
+      });
+    });
+
+    deleteImage = asyncHandler(async (req, res) => {
+      const { id } = req.params;
+
+      await imageQueryService.remove(id, req.user._id);
+
+      return res.status(200).json({
+        success: true,
+        message: "Image document and associated storage files permanently purged"
+      });
+    });
+
+    transformImage = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { transformations } = req.body;
+
+    // reject early if request payload container is completely empty
+    if (!transformations || Object.keys(transformations).length === 0) {
+      throw new AppError("Transformations parameter configuration body is required.", 400);
+    }
+
+    // pass inputs straight into our class-based transformation service
+    const jobPayload = await TransformService.requestTransformation(
+      id,
+      req.user._id,
+      transformations
+    );
+
+    // hand off the normalized payload to the broker's message queue fabric
+    await ProcessingModuleApi.enqueueImageJob(jobPayload)
+
+    return res.status(202).json({
+      success: true,
+      message: "Image transformation pipeline successfully initiated.",
+      data: {
+        imageId: id,
+        status: "PROCESSING"
+      }
     });
   });
 }
