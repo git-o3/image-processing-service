@@ -11,9 +11,10 @@ class QueueProducerService {
    */
   async dispatchProcessingTask(messagePayload) {
     // refactor keep payloads independent from Mongo internals
-    const { imageId, storagePath, originalName } = messagePayload;
+    const { jobId, inputPath, originalName, options } = messagePayload;
+     console.log("📦 Payload received:", JSON.stringify(messagePayload))
 
-    if (!imageId || !storagePath || !originalName) {
+    if (!jobId || !inputPath) {
       throw new AppError(
         "Invalid messaging payload: missing job target references.",
         400,
@@ -22,9 +23,10 @@ class QueueProducerService {
 
     // standardize the payload layout that the background worker expects to unpack
     const jobData = {
-      jobId: imageId.toString(),
-      storagePath,
+      jobId: jobId.toString(),
+      storagePath: inputPath,
       originalName,
+      options,
       enqueuedAt: new Date().toISOString(),
       requestedSizes: ["thumbnail", "mobile", "desktop"],
     };
