@@ -1,6 +1,6 @@
 import amqp from "amqplib";
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost:5672"
+const MESSAGE_BROKER_URL = process.env.MESSAGE_BROKER_URL || "amqp://localhost:5672"
 
 let connection = null;
 let channel = null;
@@ -21,7 +21,7 @@ export async function connectBroker() {
 
     try {
         
-        connection = await amqp.connect(RABBITMQ_URL);
+        connection = await amqp.connect(MESSAGE_BROKER_URL);
         channel = await connection.createChannel();
         
         channel.on("error", (err) => console.error("Channel error:", err.message));
