@@ -1,7 +1,9 @@
 import Image from "../models/Image.js";
 import { AppError } from "../../../../shared/error.js"
 
+
 class IngestionService {
+  
   /**
    * registers a raw file upload into the internal metadata layer
    * @param {object} data
