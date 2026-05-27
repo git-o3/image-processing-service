@@ -1,12 +1,12 @@
 import Image from "../models/Image.js";
 import { AppError } from "../../../../shared/error.js";
-import mongoose from "mongoose";
+
 
 class TransformService {
   /**
    * validates master asset presence and shapes custom parameters for background compute
    * @param {string} imageId - target database document ID
-   * @param {string} userId - user execution context for multi-tenant isolation
+   * @param {string} userId - user execution 
    * @param {Object} transformations - raw client HTTP JSON payload containing mutations
    */
   async requestTransformation(imageId, userId, transformations) {
