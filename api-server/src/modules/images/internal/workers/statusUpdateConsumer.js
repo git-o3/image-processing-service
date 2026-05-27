@@ -27,7 +27,7 @@ export async function initStatusConsumer() {
             const updateData = {};
  
             if (derivativePath) {
-                updateData.$push = {
+                updateData.$addToSet = {
                     derivatives: {
                         path: derivativePath,
                         url: `/derivatives/${derivativePath.split('/').pop()}`,
