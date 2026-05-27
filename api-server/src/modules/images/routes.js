@@ -5,7 +5,14 @@ import { protect } from "../users/publicApi.js";
 
 const router = Router();
 
-router.post("/upload", protect, upload.single("image"), ImageController.uploadImage);
+router.use(protect)
+
+router.post("/upload", upload.single("image"), ImageController.uploadImage);
+router.get("/", ImageController.getImages);
+router.get("/:id", ImageController.getImageById);
+router.delete("/:id", ImageController.deleteImage);
+
+router.post("/:id/transform", ImageController.transformImage);
 
 export default router;
 
