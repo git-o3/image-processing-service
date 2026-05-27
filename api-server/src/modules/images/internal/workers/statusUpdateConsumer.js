@@ -25,9 +25,15 @@ export async function initStatusConsumer() {
             );
 
             const updateData = {};
-
+ 
             if (derivativePath) {
-                updateData.derivativePath = derivativePath;
+                updateData.$push = {
+                    derivatives: {
+                        path: derivativePath,
+                        url: `/derivatives/${derivativePath.split('/').pop()}`,
+                        size: "desktop"
+                    }
+                }
             }
 
             if (errorMessage) {
