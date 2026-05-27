@@ -16,9 +16,10 @@ export const ProcessingModuleApi = {
   enqueueImageJob: async (data) => {
     // standardize the object schema parameters passed between module
     return await QueueProducerService.dispatchProcessingTask({
-        imageId: data.imageId,
-        storagePath: data.storagePath,
-        originalName: data.originalName
+        jobId: data.jobId || data.imageId,
+        inputPath: data.inputPath || data.storagePath,
+        originalName: data.originalName,
+        options: data.options
     });
   }
 }
