@@ -17,21 +17,16 @@ export const ImageModuleApi = {
     },
 
     // synchronize processing state updates
-    updateStatus: async (
-        jobId,
-        status,
-        extraFields = {}
-    ) => {
+    updateStatus: async (jobId, status, extraFields = {}) => {
+        const { $push, ...rest } = extraFields
         return await Image.findByIdAndUpdate(
             jobId,
             {
-                ...extraFields,
-                status
+                ...rest,
+                status,
+                ...($push && { $push })
             },
-            {
-                returnDocument: "after",  // Mongoose deprecation warning to Use "returnDocument" instead of "new"
-                runValidators: true
-            }
-        );
+            { returnDocument: 'after', runValidators: true }
+        )
     }
 };
